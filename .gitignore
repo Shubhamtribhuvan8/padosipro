@@ -1,0 +1,10 @@
+node_modules/
+backend/data/
+backend/outbox/
+backend/.env
+mobile/.expo/
+mobile/dist/
+mobile/android/
+mobile/ios/
+*.apk
+.DS_Store

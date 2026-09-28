@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "PadosiPro",
+    "slug": "padosipro",
+    "owner": "shubhamtribhuvan8",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "padosipro",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.padosipro.demo",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.padosipro.demo",
+      "usesCleartextTraffic": true,
+      "adaptiveIcon": {
+        "backgroundColor": "#0E2420",
+        "foregroundImage": "./assets/logo.png"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b4b0ce88-5d88-4967-84c7-6cf2206c7794"
+      }
+    }
+  }
+}

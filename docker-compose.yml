@@ -1,0 +1,27 @@
+services:
+  api:
+    build: ./backend
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: 4000
+      NODE_ENV: production
+      JWT_SECRET: demo-jwt-secret-change-me
+      OTP_PEPPER: demo-otp-pepper-change-me
+      DATABASE_PATH: /data/padosipro.db
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1025
+      MAIL_FROM: PadosiPro <noreply@padosipro.local>
+    volumes:
+      - padosi-data:/data
+    depends_on:
+      - mailpit
+
+  mailpit:
+    image: axllent/mailpit:v1.21
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
+volumes:
+  padosi-data:

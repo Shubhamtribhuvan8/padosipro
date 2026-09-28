@@ -1,0 +1,23 @@
+{
+  "name": "padosipro-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "PadosiPro assignment API: register, email OTP, login, profile, and task selection.",
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/index.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch src/index.js",
+    "test": "node --disable-warning=ExperimentalWarning --test --test-concurrency=1"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^7.0.6"
+  }
+}
