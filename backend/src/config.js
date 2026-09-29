@@ -14,11 +14,81 @@ function unquote(value) {
   return text;
 }
 
-export function loadConfig(env = process.env) {
-  const nodeEnv = env.NODE_ENV ?? "development";
+function resolveMail(env, nodeEnv) {
+  const gmailClientId = unquote(env.GMAIL_CLIENT_ID);
+  const gmailClientSecret = unquote(env.GMAIL_CLIENT_SECRET);
+  const gmailRefreshToken = unquote(env.GMAIL_REFRESH_TOKEN);
+  const brevoApiKey = unquote(env.BREVO_API_KEY);
+  const resendApiKey = unquote(env.RESEND_API_KEY);
   const smtpUser = unquote(env.SMTP_USER || env.EMAIL_USER);
   const smtpPass = unquote(env.SMTP_PASS || env.EMAIL_PASSWORD).replace(/\s+/g, "");
-  const smtpHost = unquote(env.SMTP_HOST || env.EMAIL_HOST) || (smtpUser ? "smtp.gmail.com" : "");
+  const explicitHost = unquote(env.SMTP_HOST || env.EMAIL_HOST);
+
+  if (gmailClientId && gmailClientSecret && gmailRefreshToken) {
+    return {
+      mailTransport: "gmail-api",
+      smtpHost: "",
+      smtpUser,
+      smtpPass,
+      gmailClientId,
+      gmailClientSecret,
+      gmailRefreshToken,
+      brevoApiKey: "",
+      resendApiKey: "",
+    };
+  }
+  if (brevoApiKey) {
+    return {
+      mailTransport: "brevo",
+      smtpHost: "",
+      smtpUser,
+      smtpPass,
+      gmailClientId: "",
+      gmailClientSecret: "",
+      gmailRefreshToken: "",
+      brevoApiKey,
+      resendApiKey: "",
+    };
+  }
+  if (resendApiKey) {
+    return {
+      mailTransport: "resend",
+      smtpHost: "",
+      smtpUser,
+      smtpPass,
+      gmailClientId: "",
+      gmailClientSecret: "",
+      gmailRefreshToken: "",
+      brevoApiKey: "",
+      resendApiKey,
+    };
+  }
+
+  let smtpHost = explicitHost;
+  if (!smtpHost && smtpUser && smtpPass && nodeEnv !== "production") {
+    smtpHost = "smtp.gmail.com";
+  }
+  if (smtpHost === "smtp.gmail.com" && nodeEnv === "production") {
+    smtpHost = "";
+  }
+
+  return {
+    mailTransport: smtpHost ? "smtp" : "outbox",
+    smtpHost,
+    smtpUser,
+    smtpPass,
+    gmailClientId: "",
+    gmailClientSecret: "",
+    gmailRefreshToken: "",
+    brevoApiKey: "",
+    resendApiKey: "",
+  };
+}
+
+export function loadConfig(env = process.env) {
+  const nodeEnv = env.NODE_ENV ?? "development";
+  const mail = resolveMail(env, nodeEnv);
+  const httpsMail = mail.mailTransport === "gmail-api" || mail.mailTransport === "brevo" || mail.mailTransport === "resend";
   return {
     nodeEnv,
     port: Number(env.PORT ?? 4000),
@@ -27,13 +97,11 @@ export function loadConfig(env = process.env) {
     otpPepper: env.OTP_PEPPER || (nodeEnv === "production" ? "" : "dev-otp-pepper-change-me"),
     databasePath: env.DATABASE_PATH || path.join(root, "data", "padosipro.db"),
     bcryptRounds: Number(env.BCRYPT_ROUNDS ?? (nodeEnv === "test" ? 4 : 10)),
-    smtpHost,
-    smtpPort: Number(unquote(env.SMTP_PORT || env.EMAIL_PORT) || (smtpHost === "smtp.gmail.com" ? 465 : 1025)),
-    smtpUser,
-    smtpPass,
+    ...mail,
+    smtpPort: Number(unquote(env.SMTP_PORT || env.EMAIL_PORT) || (mail.smtpHost === "smtp.gmail.com" ? 465 : 1025)),
     mailFrom: unquote(env.MAIL_FROM || env.EMAIL_FROM) || "PadosiPro <noreply@padosipro.local>",
     outboxDir: env.OUTBOX_DIR || path.join(root, "outbox"),
-    logOtp: nodeEnv !== "production" || !smtpHost,
+    logOtp: nodeEnv !== "production" || (!mail.smtpHost && !httpsMail),
   };
 }
 

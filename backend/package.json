@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node --disable-warning=ExperimentalWarning src/index.js",
     "dev": "node --disable-warning=ExperimentalWarning --watch src/index.js",
-    "test": "node --disable-warning=ExperimentalWarning --test --test-concurrency=1"
+    "test": "node --disable-warning=ExperimentalWarning --test --test-concurrency=1",
+    "gmail-auth": "node --env-file=.env scripts/gmail-oauth.mjs"
   },
   "engines": {
     "node": ">=22"

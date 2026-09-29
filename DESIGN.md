@@ -8,7 +8,7 @@ Sign-in is mobile number plus email, then a 6-digit email code. There is no pass
 
 After the code is accepted the client opens home. A request is a category, a service, an urgency (Standard, Same day, Express, or Scheduled), and a short note. Home lists those requests. Account can save a name, address, and an optional business name. The mobile number is already collected at sign-in.
 
-Mail goes out through Nodemailer. `EMAIL_*` and `SMTP_*` are the same settings. Gmail is used when `EMAIL_USER` is set. Docker Compose sends mail to Mailpit instead. If SMTP is unreachable, the API still completes sign-in setup and prints the code in the server log so the demo can continue.
+Mail prefers the Gmail API over HTTPS when `GMAIL_REFRESH_TOKEN` is set. Railway hobby blocks SMTP ports, and HTTPS to `gmail.googleapis.com` is open, so that is the production path. Locally, Nodemailer still uses Gmail SMTP (`EMAIL_*` or `SMTP_*`) or Mailpit in Docker. If no transport is configured, or a send fails, the API still finishes sign-in setup and prints the code in the server log.
 
 ## Trade-offs
 
@@ -22,4 +22,4 @@ Colour and type follow the portal: cream `#FAFAF7`, ink `#101828`, muted `#66708
 
 ## Left out
 
-Household members, wallet top-up, and live chat with the Lifestyle Manager are shown as coming soon, matching the portal. Push notifications, refresh-token rotation, and a second mail provider are not in this build. Railway's hobby plan blocks outbound SMTP, so production email delivery needs a host that allows port 465.
+Household members, wallet top-up, and live chat with the Lifestyle Manager are shown as coming soon, matching the portal. Push notifications and refresh-token rotation are not in this build. Production mail is the Gmail HTTPS API rather than SMTP, because the hobby host blocks ports 465 and 587.

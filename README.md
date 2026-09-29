@@ -6,7 +6,7 @@ A native household app for the PadosiPro request journey: sign in with an Indian
 
 - Account creation and login with mobile (+91, 10 digits) and email. There is no password.
 - A 6-digit email code, valid for 10 minutes, single use, at most 5 wrong attempts, and a 30-second resend wait. Only a hash of the code is stored.
-- Real email through Nodemailer. Locally this uses the Gmail SMTP settings in `backend/.env`. With Docker, mail goes to Mailpit.
+- Real email. Locally this uses the Gmail SMTP settings in `backend/.env`, or Mailpit when you run Docker. The hosted API sends through the Gmail HTTPS API, because Railway's hobby plan blocks SMTP.
 - Home, then a request: category, service, urgency, a short note, and confirmation.
 - Sixteen categories and their services, including the ones marked Soon.
 - Account: name, address, and an optional business name. Business name is optional because many households are not a business. The mobile number is already collected at sign-in.
@@ -115,4 +115,4 @@ cd backend && npm test
 
 Covers OTP hashing, expiry, the 5-attempt lock, the 30-second resend cooldown, phone-and-email sign-in, and saving a request.
 
-The preview APK talks to `https://padosipro-api-production.up.railway.app`. Railway's hobby plan blocks outbound SMTP, so a code that cannot be emailed is written to the API log. Gmail delivery works when the API runs on a network that allows port 465.
+The preview APK talks to `https://padosipro-api-production.up.railway.app`. That host blocks outbound SMTP on the hobby plan, so production does not connect to `smtp.gmail.com`. It sends through the Gmail API over HTTPS when `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, and `GMAIL_REFRESH_TOKEN` are set on the service. Those values stay out of git. Local Gmail SMTP and Mailpit are unchanged. A code is printed in the API log only when no mail transport is configured, or when the send itself fails.

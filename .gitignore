@@ -2,6 +2,7 @@ node_modules/
 backend/data/
 backend/outbox/
 backend/.env
+backend/.gmail-oauth.json
 mobile/.expo/
 mobile/dist/
 mobile/android/
